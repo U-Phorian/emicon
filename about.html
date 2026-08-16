@@ -184,7 +184,15 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--t);outline-offset:3
       <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:26px">
         <div style="padding:14px 0;border-top:1px solid var(--ln)">
           <span style="font-family:var(--fm);font-size:.73rem;text-transform:uppercase;letter-spacing:.08em;color:var(--t);display:block;margin-bottom:5px">Email</span>
-          <span style="color:var(--sl)">emiconsoc@gmail.com</span>
+          <a href="mailto:hello@emicon.in"
+  style="color:var(--sl);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color .2s"
+  onmouseover="this.style.color='var(--t)'" onmouseout="this.style.color='var(--sl)'">
+  hello@emicon.in
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:.7">
+    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+    <polyline points="22,6 12,13 2,6"/>
+  </svg>
+</a>
         </div>
         <div style="padding:14px 0;border-top:1px solid var(--ln)">
           <span style="font-family:var(--fm);font-size:.73rem;text-transform:uppercase;letter-spacing:.08em;color:var(--t);display:block;margin-bottom:5px">Location</span>
@@ -196,19 +204,77 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--t);outline-offset:3
         </div>
       </div>
     </div>
-    <form onsubmit="event.preventDefault();document.getElementById('fok').style.display='block'"
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>
+      // ── PASTE YOUR EMAILJS KEYS HERE ──────────────────────────
+      var EJS_PUBLIC_KEY   = 'DjXFq721lxb2daR-Z';
+      var EJS_SERVICE_ID   = 'service_211x4fl';
+      var EJS_TEMPLATE_ID  = 'template_v380l0f';
+      // ─────────────────────────────────────────────────────────
+      emailjs.init({ publicKey: EJS_PUBLIC_KEY });
+
+      function submitForm(e) {
+        e.preventDefault();
+        var btn  = document.getElementById('send-btn');
+        var ok   = document.getElementById('form-ok');
+        var err  = document.getElementById('form-err');
+        var form = document.getElementById('contact-form');
+
+        // Reset states
+        ok.style.display = 'none';
+        err.style.display = 'none';
+        btn.disabled = true;
+        btn.textContent = 'Sending…';
+        btn.style.opacity = '0.7';
+
+        var params = {
+          from_name:    document.getElementById('f-name').value,
+          from_email:   document.getElementById('f-email').value,
+          node:         document.getElementById('f-node').value,
+          message:      document.getElementById('f-message').value,
+          to_email:     'emiconsoc@gmail.com'
+        };
+
+        emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, params)
+          .then(function() {
+            ok.style.display = 'flex';
+            form.reset();
+          })
+          .catch(function(error) {
+            err.style.display = 'flex';
+            err.querySelector('span').textContent = 'Something went wrong. Email us directly at hello@emicon.in';
+            console.error('EmailJS error:', error);
+          })
+          .finally(function() {
+            btn.disabled = false;
+            btn.textContent = 'Send message';
+            btn.style.opacity = '1';
+          });
+      }
+    </script>
+
+    <form id="contact-form" onsubmit="submitForm(event)"
       style="display:flex;flex-direction:column;gap:16px">
       <div>
         <label style="font-family:var(--fm);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--s);display:block;margin-bottom:6px">Name</label>
-        <input required style="width:100%;background:var(--np);border:1px solid var(--ln);border-radius:4px;padding:11px 13px;color:var(--w);font-family:var(--fb);font-size:.93rem;outline:none" onfocus="this.style.borderColor='var(--t)'" onblur="this.style.borderColor='var(--ln)'">
+        <input id="f-name" name="from_name" required
+          style="width:100%;background:var(--np);border:1px solid var(--ln);border-radius:4px;padding:11px 13px;color:var(--w);font-family:var(--fb);font-size:.93rem;outline:none"
+          onfocus="this.style.borderColor='var(--t)'" onblur="this.style.borderColor='var(--ln)'"
+          placeholder="Your full name">
       </div>
       <div>
         <label style="font-family:var(--fm);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--s);display:block;margin-bottom:6px">Email</label>
-        <input type="email" required style="width:100%;background:var(--np);border:1px solid var(--ln);border-radius:4px;padding:11px 13px;color:var(--w);font-family:var(--fb);font-size:.93rem;outline:none" onfocus="this.style.borderColor='var(--t)'" onblur="this.style.borderColor='var(--ln)'">
+        <input id="f-email" name="from_email" type="email" required
+          style="width:100%;background:var(--np);border:1px solid var(--ln);border-radius:4px;padding:11px 13px;color:var(--w);font-family:var(--fb);font-size:.93rem;outline:none"
+          onfocus="this.style.borderColor='var(--t)'" onblur="this.style.borderColor='var(--ln)'"
+          placeholder="you@example.com">
       </div>
       <div>
         <label style="font-family:var(--fm);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--s);display:block;margin-bottom:6px">Which node?</label>
-        <select style="width:100%;background:var(--np);border:1px solid var(--ln);border-radius:4px;padding:11px 13px;color:var(--w);font-family:var(--fb);font-size:.93rem;outline:none;cursor:pointer" onfocus="this.style.borderColor='var(--t)'" onblur="this.style.borderColor='var(--ln)'">
+        <select id="f-node" name="node"
+          style="width:100%;background:var(--np);border:1px solid var(--ln);border-radius:4px;padding:11px 13px;color:var(--w);font-family:var(--fb);font-size:.93rem;outline:none;cursor:pointer"
+          onfocus="this.style.borderColor='var(--t)'" onblur="this.style.borderColor='var(--ln)'">
           <option>VLSI — PD / Verification / FPGA</option>
           <option>Embedded / IoT</option>
           <option>PCB Design</option>
@@ -218,10 +284,33 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--t);outline-offset:3
       </div>
       <div>
         <label style="font-family:var(--fm);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--s);display:block;margin-bottom:6px">Project details</label>
-        <textarea required rows="4" placeholder="What are you building, and what stage is it at?" style="width:100%;background:var(--np);border:1px solid var(--ln);border-radius:4px;padding:11px 13px;color:var(--w);font-family:var(--fb);font-size:.93rem;outline:none;resize:vertical" onfocus="this.style.borderColor='var(--t)'" onblur="this.style.borderColor='var(--ln)'"></textarea>
+        <textarea id="f-message" name="message" required rows="4"
+          placeholder="What are you building, and what stage is it at?"
+          style="width:100%;background:var(--np);border:1px solid var(--ln);border-radius:4px;padding:11px 13px;color:var(--w);font-family:var(--fb);font-size:.93rem;outline:none;resize:vertical"
+          onfocus="this.style.borderColor='var(--t)'" onblur="this.style.borderColor='var(--ln)'"></textarea>
       </div>
-      <button type="submit" class="btn bt" style="align-self:flex-start">Send message</button>
-      <p id="fok" style="display:none;font-family:var(--fm);font-size:.83rem;color:var(--t)">Thanks — connect Formspree or a serverless backend to receive submissions live.</p>
+
+      <button id="send-btn" type="submit" class="btn bt" style="align-self:flex-start">Send message</button>
+
+      <!-- Success message -->
+      <div id="form-ok" style="display:none;align-items:center;gap:10px;padding:14px 16px;
+        background:rgba(46,158,79,0.12);border:1px solid var(--grn);border-radius:4px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--grn)" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span style="font-family:var(--fm);font-size:.83rem;color:var(--grn)">
+          Message sent! We'll get back to you within 1–2 business days.
+        </span>
+      </div>
+
+      <!-- Error message -->
+      <div id="form-err" style="display:none;align-items:center;gap:10px;padding:14px 16px;
+        background:rgba(220,38,38,0.1);border:1px solid #dc2626;border-radius:4px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span style="font-family:var(--fm);font-size:.83rem;color:#ef4444">Error placeholder</span>
+      </div>
     </form>
   </div>
 </section>
